@@ -103,7 +103,7 @@ param(
 
     [Parameter(Mandatory=$False)]
     [string]
-    $DestinationAddressPrefies
+    $DestinationAddressPrefixes
 )
 
 # If template path provded, do not use default
@@ -116,9 +116,8 @@ $templateParams = @{
     tags = @{
         "ownerEmail" = $OwnerEmail
     }
-    networkSecurityGroups_name = @{
-        "securityGroupName" = $SecurityGroupName
-    }
+    "securityGroupName" = $SecurityGroupName
+    
     securityRules = @{
         "name" = $SecurityRuleName
         "protocol" = $Protocol    
@@ -172,7 +171,7 @@ If (Get-AzNetworkSecurityGroup -Name $SecurityGroupName -ResourceGroupName $Reso
     Write-Host -ForegroundColor Red "`nNetwork Security Group already exists, please try again with a different SecurityGroupName.`n"
 } Else {
     # Deploy with template + parameters
-    If (New-AzResourceGroupDeployment -Name $DeploymentNames -ResourceGroupName $ResourceGroupName -TemplateFile $DefaultTemplateFilePath -TemplateParameterObject $templateParams -Verbose) {
+    If (New-AzResourceGroupDeployment -Name $DeploymentName -ResourceGroupName $ResourceGroupName -TemplateFile $DefaultTemplateFilePath -TemplateParameterObject $templateParams -Verbose) {
         Write-Host -ForegroundColor Blue "`nNSG created successfully.`n"
     } Else {
         Write-Host -ForegroundColor Red $_.Exception.Message
