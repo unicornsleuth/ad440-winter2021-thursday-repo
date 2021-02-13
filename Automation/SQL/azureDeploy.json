@@ -1,55 +1,97 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-      "serverName": {
-          "type": "string",
-          "defaultValue": "[concat('nsc-sqlsrv-', resourceGroup().location, '-acbc')]",
-          "metadata": {
-              "description": "The name of the SQL logical server."
-          }
-      },
-      "location": {
-          "type": "string",
-          "defaultValue": "westus2",
-          "metadata": {
-              "description": "Location for all resources."
-          }
-      },
-      "administratorLogin": {
-          "type": "string",
-          "metadata": {
-              "description": "The administrator username of the SQL logical server."
-          }
-      },
-      "administratorLoginPassword": {
-          "type": "securestring",
-          "metadata": {
-              "description": "The administrator password of the SQL logical server."
-          }
-      },
-      "allowAzureIPs": {
-          "defaultValue": true,
-          "type": "bool",
-          "metadata": {
-              "description": "Allow Azure services to access server."
-          }
-      }
-  },
-  "variables": {},
-  "resources": [
-      {
-          "type": "Microsoft.Sql/servers",
-          "apiVersion": "2020-02-02-preview",
-          "name": "[parameters('serverName')]",
-          "location": "[parameters('location')]",
-          "properties": {
-              "administratorLogin": "[parameters('administratorLogin')]",
-              "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
-              "version": "12.0",
-              "publicNetworkAccess": "Enabled"
-          }
-      },
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serverName": {
+            "type": "string",
+            "defaultValue": "[concat('nsc-sqlsrv-', resourceGroup().location, '-acbc')]",
+            "metadata": {
+                "description": "The name of the SQL logical server."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "westus2",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "administratorLogin": {
+            "type": "string",
+            "metadata": {
+                "description": "The administrator username of the SQL logical server."
+            }
+        },
+        "administratorLoginPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The administrator password of the SQL logical server."
+            }
+        },
+        "allowAzureIPs": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "Allow Azure services to access server."
+            }
+        },
+        "storageAccountName": {
+            "defaultValue": "[concat('sqlstorage', uniqueString(resourceGroup().id))]",
+            "type": "String",
+            "metadata": {
+                "description": "The name of the storage account."
+            }
+        },
+        "sqlDBName": {
+            "type": "string",
+            "defaultValue": "nsc-sample-db",
+            "metadata": {
+                "description": "The name of the SQL Database."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2020-02-02-preview",
+            "name": "[parameters('serverName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "version": "12.0",
+                "publicNetworkAccess": "Enabled"
+            },
+        
+            "resources": [
+                {
+                    "type": "databases",
+                    "apiVersion": "2020-08-01-preview",
+                    "name": "[parameters('sqlDBName')]",
+                    "location": "[parameters('location')]",
+                    "sku": {
+                        "name": "Standard",
+                        "tier": "Standard"
+                    },
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', concat(parameters('serverName')))]"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2020-08-01-preview",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {}
+        },
         {
             "type": "Microsoft.Sql/servers/auditingPolicies",
             "apiVersion": "2014-04-01",

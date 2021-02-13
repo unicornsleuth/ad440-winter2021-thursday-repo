@@ -10,6 +10,8 @@ param(
         [string] [Parameter(Mandatory=$true)] $location,
         [string] [Parameter(Mandatory=$true)] $resourceGroupName,
         [string] [Parameter(Mandatory=$true)] $serverName,
+        [string] [Parameter(Mandatory=$false)] $storageAccountName,
+        [string] [Parameter(Mandatory=$false)] $sqlDBName,
         [string] [Parameter(Mandatory=$true)] $administratorLogin,
         [string] [Parameter(Mandatory=$true)] $administratorLoginPassword
 )
