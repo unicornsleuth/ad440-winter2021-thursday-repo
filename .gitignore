@@ -70,7 +70,6 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
-.vscode
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -110,10 +109,10 @@ dist
 #artillery report output
 test/artillery/report.json
 # Vscode
-.vscode
+
 vscode
 .DS_Store
 DS_Store
 
 # ignore .vscode
-.vscode/
+.vscode

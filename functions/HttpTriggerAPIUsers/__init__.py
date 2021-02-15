@@ -41,7 +41,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             return new_user_id_http_response
 
         else:
-            logging.warn(f"Request with method {method} has been recieved, but that is not allowed for this endpoint")
+            logging.warn(f"Request with method {method} has been received, but that is not allowed for this endpoint")
             return func.HttpResponse(status_code=405)
 
     #displays erros encountered when API methods were called
